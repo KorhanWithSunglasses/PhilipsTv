@@ -1,0 +1,229 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Korhan TV - Smart TV Dashboard</title>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Theme Config -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7c3bed",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#000000", // Pure black for OLED
+                        "surface": "#1A1A1A", // Slightly lighter for cards
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    boxShadow: {
+                        "glow": "0 0 20px rgba(124, 59, 237, 0.5)",
+                        "focus": "0 0 0 4px #FFFFFF",
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom styles for TV Interface nuances */
+        body {
+            background-color: #000000;
+            color: white;
+            overflow: hidden; /* Typical for TV apps to prevent scrollbars */
+        }
+        
+        .tv-safe-area {
+            padding: 60px;
+            height: 100vh;
+            width: 100vw;
+            box-sizing: border-box;
+        }
+
+        /* Focus Simulation Classes */
+        .is-focused {
+            transform: scale(1.05);
+            z-index: 10;
+            box-shadow: 0 0 0 4px #FFFFFF, 0 10px 30px rgba(0,0,0,0.5);
+            background-color: #2a2a2a;
+        }
+
+        .menu-item.active {
+            color: #FFFFFF;
+            border-left: 6px solid #7c3bed;
+            background: linear-gradient(90deg, rgba(124,59,237,0.2) 0%, rgba(0,0,0,0) 100%);
+            font-weight: 700;
+        }
+
+        .menu-item {
+            color: #888888;
+            transition: all 0.2s ease;
+        }
+
+        /* Blinking Animation */
+        @keyframes blink {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        .animate-blink {
+            animation: blink 2s infinite;
+        }
+
+        /* Custom Scrollbar hiding for cleaner TV look */
+        .hide-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .hide-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+    </style>
+</head>
+<body class="font-display antialiased selection:bg-primary selection:text-white">
+<div class="tv-safe-area flex gap-12 bg-background-dark">
+<!-- SIDEBAR -->
+<aside class="flex flex-col w-[350px] shrink-0 h-full justify-between">
+<div class="flex flex-col gap-12">
+<!-- Logo -->
+<div class="px-6">
+<h1 class="text-primary text-[42px] font-bold tracking-tight leading-none">KORHAN TV</h1>
+<p class="text-neutral-400 text-lg mt-1 font-medium">Premium Smart TV</p>
+</div>
+<!-- Navigation -->
+<nav class="flex flex-col gap-4">
+<!-- Active Item -->
+<div class="menu-item active flex items-center gap-6 px-6 py-4 rounded-r-xl">
+<span class="material-symbols-outlined text-[32px]">home</span>
+<span class="text-[28px] leading-none">Ana Sayfa</span>
+</div>
+<div class="menu-item flex items-center gap-6 px-6 py-4 rounded-r-xl">
+<span class="material-symbols-outlined text-[32px]">live_tv</span>
+<span class="text-[28px] leading-none">Canlı Yayınlar</span>
+</div>
+<div class="menu-item flex items-center gap-6 px-6 py-4 rounded-r-xl">
+<span class="material-symbols-outlined text-[32px]">movie</span>
+<span class="text-[28px] leading-none">Diziler</span>
+</div>
+<div class="menu-item flex items-center gap-6 px-6 py-4 rounded-r-xl">
+<span class="material-symbols-outlined text-[32px]">theaters</span>
+<span class="text-[28px] leading-none">Filmler</span>
+</div>
+</nav>
+</div>
+<!-- Bottom Settings -->
+<div class="menu-item flex items-center gap-6 px-6 py-4 rounded-r-xl mb-4">
+<span class="material-symbols-outlined text-[32px]">settings</span>
+<span class="text-[28px] leading-none">Ayarlar</span>
+</div>
+</aside>
+<!-- MAIN CONTENT AREA -->
+<main class="flex-1 flex flex-col gap-10 h-full overflow-hidden">
+<!-- Hero Banner -->
+<!-- Note: Using 'group' to simulate focus if needed, but primarily static here -->
+<div class="relative w-full h-[400px] shrink-0 rounded-2xl overflow-hidden bg-surface shadow-2xl group">
+<!-- Background Image -->
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Exciting soccer match stadium crowd cheering with bright floodlights" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJR7H8-fJMO3LZJtD79bpAovwtLy9qsTbAMtRKT0hQx29kCSobnTkmXg_Dc36zxeVMfoQm9FsI0VFfvqGFvNRlpedQzClhnecu-kIJMrsGGn410T1B4Yhewr2NOOmOPdTx61GIhCzj5W9__uoDY7AGD0AVFKsywKKs5qPDarcx7YTIZp64CRf3bYHtBXzBbcGM6fIifs5YD5eZyuMOzRCKg358K4RY2jg7Go1H2sJBK0Wa7s1cU1D2f7SCPG7SePrPVKlYm9xKs--X');">
+</div>
+<!-- Gradient Overlay for Text Readability -->
+<div class="absolute inset-0 bg-gradient-to-r from-black via-black/60 to-transparent"></div>
+<!-- Hero Content -->
+<div class="absolute inset-0 flex flex-col justify-center px-12 gap-4">
+<div class="flex items-center gap-3 mb-2">
+<span class="bg-primary/90 text-white text-lg font-bold px-3 py-1 rounded">FEATURED</span>
+<span class="text-gray-300 text-xl font-medium tracking-wide uppercase">Sports</span>
+</div>
+<h2 class="text-white text-[56px] font-bold leading-[1.1] max-w-[800px]">Derby Day: <br/>The Final Showdown</h2>
+<p class="text-gray-300 text-2xl font-normal max-w-[650px] line-clamp-2">
+                        Watch the biggest match of the season live in 4K HDR. Experience every goal, every tackle, and every moment of glory.
+                    </p>
+<div class="flex items-center gap-6 mt-4">
+<button class="flex items-center gap-3 bg-white text-black px-8 py-4 rounded-lg font-bold text-xl hover:scale-105 transition-transform">
+<span class="material-symbols-outlined fill-1">play_arrow</span>
+                            İzle
+                        </button>
+<button class="flex items-center gap-3 bg-white/20 backdrop-blur-sm text-white px-8 py-4 rounded-lg font-bold text-xl hover:bg-white/30 transition-colors">
+<span class="material-symbols-outlined">add</span>
+                            Listeme Ekle
+                        </button>
+</div>
+</div>
+</div>
+<!-- Content Rows -->
+<div class="flex flex-col gap-6 overflow-hidden">
+<div class="flex items-center justify-between pr-4">
+<h3 class="text-[32px] font-bold text-white tracking-wide">Şu An Canlı</h3>
+<div class="flex gap-2">
+<span class="w-3 h-3 rounded-full bg-white opacity-100"></span>
+<span class="w-3 h-3 rounded-full bg-white opacity-20"></span>
+<span class="w-3 h-3 rounded-full bg-white opacity-20"></span>
+</div>
+</div>
+<div class="flex gap-8 pb-8 pl-2 pt-2 overflow-x-visible hide-scrollbar">
+<!-- Card 1: FOCUSED & LIVE -->
+<div class="relative shrink-0 w-[440px] aspect-video rounded-xl overflow-hidden is-focused group transition-all duration-300 cursor-pointer">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Gamer streaming setup with neon lights and multiple monitors" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCKMo6wQtN0KEO86MkDNHSxbOz0dDo-LKZLaJGyko7A3LRYP16NEGLVshpJvR6zSIJ2-rUXaMcI1-Ho-zSedvcrwhXPg3bwvFXNG4uv3h-N1YcF0GR2dvMomnDatGHicTFhtoHjMLBqXqogSEDaXps_p01JFxDWsdA7_C0PVlYvLekiU3VJaukvfgTUY3fLprcaA1IiXY2yoQeEviREmM-OxScMh4qmJNxNh4GNOQOcV9E2Z1M919pxEKnQ_3P-W23XOzefJeBifGhF');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+<!-- Live Badge -->
+<div class="absolute top-4 left-4 flex items-center gap-2 bg-red-600 px-3 py-1.5 rounded shadow-lg animate-blink">
+<span class="w-3 h-3 rounded-full bg-white"></span>
+<span class="text-white text-base font-bold tracking-wider">CANLI</span>
+</div>
+<!-- Card Info -->
+<div class="absolute bottom-0 left-0 w-full p-6 flex flex-col gap-1">
+<h4 class="text-white text-[26px] font-bold truncate">Swaggybark</h4>
+<div class="flex items-center justify-between">
+<p class="text-gray-300 text-xl font-medium truncate">Just Chatting</p>
+<span class="text-primary text-lg font-bold">15K İzleyici</span>
+</div>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="relative shrink-0 w-[380px] aspect-video rounded-xl overflow-hidden bg-surface group transition-all duration-300 opacity-80 scale-100">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Person playing video games in a dark room with headphones" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD2giI60s7pnQhLVnFMy_i8Sl5c4TkftlBFpOASjS_imCM7quaiHE7hYw_LTEkgPyO1-NZTcKdItYAyIkyAHGMdYTCZsvwuJ5_BrKZsgnI2E3UcCdN0AVxAR0S2xn6p7F2xFs6w4ZhwEG-LnAY_P4WZQa9UYc6A8k0a_XthVMjeGDSi4LNyhi3odOWAvUb2y-mAewiEt2P9UHdwo_QALcsZiCkiEKlr653XxxonX1dhsixRl9WCjOiufJNg6_rEmYlWxVQMFZLo7pid');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+<div class="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded">
+<span class="w-2 h-2 rounded-full bg-red-500"></span>
+<span class="text-white text-sm font-bold tracking-wider">CANLI</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col gap-1">
+<h4 class="text-white text-[22px] font-bold truncate">Elraenn</h4>
+<p class="text-gray-400 text-lg font-medium truncate">Gaming</p>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="relative shrink-0 w-[380px] aspect-video rounded-xl overflow-hidden bg-surface group transition-all duration-300 opacity-80 scale-100">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Surfer catching a big wave in the ocean during sunset" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDvqvGssi8n_D_UnUYV-sZz8aZs7whR3nY4td91CRygMt3ZDTsiCyZu45SXT4EfjM5ZIIQyjN_r7epKd9zCKIDVTjT1XLTnG5xp6L4CZrm0fjZBkrPGvC8s7_hHhAxjtw6xawPe2LQF7CohAY_BsGZXoLDTpydzrDzk2cZ7dtBJqrebm-r_5xtI7k5SuMW33pOw1tbKxh702xR3aBeZ-p9AB17Hng09BCxZ8YiSWTmTmHpa5oU3xOByIFCVRMmABS4f2A8ovvCjGHW8');">
+</div>
+<div class="absolute inset-0 bg-gradient-to-t from-black via-transparent to-transparent opacity-90"></div>
+<div class="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded">
+<span class="text-white text-sm font-bold tracking-wider">OFFLINE</span>
+</div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col gap-1">
+<h4 class="text-white text-[22px] font-bold truncate">Kendine Müzisyen</h4>
+<p class="text-gray-400 text-lg font-medium truncate">IRL Stream</p>
+</div>
+</div>
+<!-- Card 4 (Peek) -->
+<div class="relative shrink-0 w-[100px] aspect-video rounded-l-xl overflow-hidden bg-surface group transition-all duration-300 opacity-40 scale-100">
+<div class="absolute inset-0 bg-cover bg-center" data-alt="Abstract dark geometric shapes with purple light" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBzRHTOy9bfg132soxW7ouhZTg4Y3Il_BPyqEYAjcFKunYwJwy3XKTp6mStM8c0w19BYaVKsLfM3cDQuCw5mkmjD1XB_TcCRY0j2tf7OnEdqep0Y_F1wbNQGKUq_YaMYBPDuRjNUGQjSADiUng1qpyDWcGXOoodCitEB6k__2s_NbCLIIWX0xZea2eDFTUR1xbKD8a_huDPfC_Rj9bA5rqLxUDWusDDfe4sF_LuG_3lg9BVxVtLaFpvVyc20shQWqbawv3CogyP9x4x');">
+</div>
+</div>
+</div>
+</div>
+</main>
+</div>
+</body></html>

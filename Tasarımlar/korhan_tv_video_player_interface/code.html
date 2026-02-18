@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Korhan TV - Video Player</title>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7c3bed",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#171121",
+                        "tv-black": "#050505", // Deep black for OLED
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "full": "9999px" },
+                    spacing: {
+                        'overscan': '60px', // Safe zone padding
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for TV look */
+        ::-webkit-scrollbar {
+            display: none;
+        }
+        
+        /* Simulating focus ring for remote control navigation */
+        .tv-focusable:focus, .tv-focusable:hover {
+            outline: 4px solid #7c3bed;
+            outline-offset: 4px;
+            transform: scale(1.05);
+            transition: all 0.2s ease-in-out;
+            background-color: rgba(124, 59, 237, 0.2);
+            backdrop-filter: blur(4px);
+        }
+
+        /* Gradient overlays */
+        .overlay-gradient-bottom {
+            background: linear-gradient(to top, rgba(0,0,0,0.95) 0%, rgba(0,0,0,0.6) 40%, rgba(0,0,0,0) 100%);
+        }
+        
+        .overlay-gradient-top {
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+        }
+
+        .live-pulse {
+            animation: pulse-red 2s infinite;
+        }
+
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+    </style>
+</head>
+<body class="bg-background-dark text-white font-display overflow-hidden h-screen w-screen selection:bg-primary selection:text-white">
+<!-- Main Container simulating TV Screen -->
+<div class="relative w-full h-full flex flex-col group/player">
+<!-- Video Background Layer -->
+<!-- In a real app, this would be a <video> tag. Using an image for design. -->
+<div class="absolute inset-0 w-full h-full z-0 bg-tv-black">
+<div class="absolute inset-0 bg-cover bg-center opacity-80" data-alt="Cinematic shot of a lush forest landscape representing the video content" style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuD8cJqeRu-xy-U7yHJGOW57rGumyzZaaFxHC2_PnuyH1D_qcEw_aV01W_Lqu39xR8uQ1-Dyk0jdl8VHc1J-vcEXF5rKrBbsCoc4PGA6I-lN48Aj2bkqP1n2fVzDCnKvSsindA1-KO1LllJq6T37HDPyg4VO8KQExwX_voNlniuBUSgRb7lNy09CrVd1VDr--zy5Iu7CF9E3PBOzqMPLsTcurleFT6Q7vz5CwCfEQ5hNIFGHrxDn4_ITJKU08cZybxPmm-fkhCXcdPtk');">
+</div>
+<!-- Simulated Video Content Overlay for Contrast -->
+<div class="absolute inset-0 bg-black/20"></div>
+</div>
+<!-- Top Information Overlay -->
+<div class="absolute top-0 left-0 w-full h-48 overlay-gradient-top z-10 flex items-start justify-between p-overscan pointer-events-none">
+<!-- Streamer Info -->
+<div class="flex flex-col gap-2">
+<div class="flex items-center gap-4">
+<div class="bg-red-600 text-white text-xl font-bold px-3 py-1 rounded-lg flex items-center gap-2 live-pulse shadow-lg">
+<span class="w-3 h-3 bg-white rounded-full"></span>
+                        LIVE
+                    </div>
+<span class="text-white/80 text-2xl font-medium tracking-wide">04:20:15</span>
+</div>
+<h1 class="text-5xl font-bold text-white tracking-tight mt-2 drop-shadow-md">Swaggybark</h1>
+<h2 class="text-3xl text-primary font-medium flex items-center gap-2 drop-shadow-sm">
+<span class="material-symbols-outlined filled text-4xl">category</span>
+                    Just Chatting
+                </h2>
+</div>
+<!-- Top Right: Branding or Time -->
+<div class="flex items-center gap-3 opacity-80">
+<div class="text-right">
+<p class="text-3xl font-bold tracking-widest text-white">KORHAN TV</p>
+<p class="text-lg text-white/60 font-medium">PREMIUM</p>
+</div>
+</div>
+</div>
+<!-- Center Controls Layer (Play/Pause Big Button - often invisible or visible on pause) -->
+<div class="absolute inset-0 z-10 flex items-center justify-center pointer-events-none">
+<!-- This icon usually appears briefly on state change or pause -->
+<div class="w-32 h-32 bg-black/40 backdrop-blur-sm rounded-full flex items-center justify-center opacity-0 group-hover/player:opacity-100 transition-opacity duration-500">
+<span class="material-symbols-outlined text-white text-[80px]" style="font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 48">play_arrow</span>
+</div>
+</div>
+<!-- Bottom Controls Overlay -->
+<div class="absolute bottom-0 left-0 w-full h-80 overlay-gradient-bottom z-20 flex flex-col justify-end p-overscan">
+<!-- Progress Bar Section -->
+<div class="w-full mb-10 group/timeline">
+<!-- Time tooltip wrapper (hidden by default, can be shown on scrub) -->
+<div class="relative w-full h-6 mb-2">
+<div class="absolute left-[75%] -top-12 -translate-x-1/2 bg-white text-black font-bold text-xl px-4 py-1 rounded-lg shadow-lg">
+                        -2:23
+                    </div>
+</div>
+<!-- The Bar -->
+<div class="h-4 w-full bg-white/20 rounded-full cursor-pointer relative overflow-hidden tv-focusable">
+<!-- Loaded Buffer -->
+<div class="absolute top-0 left-0 h-full bg-white/30 w-[85%] rounded-full"></div>
+<!-- Play Progress -->
+<div class="absolute top-0 left-0 h-full bg-primary w-[75%] rounded-full shadow-[0_0_15px_rgba(124,59,237,0.8)]"></div>
+</div>
+</div>
+<!-- Main Control Row -->
+<div class="flex items-center justify-between w-full">
+<!-- Left: Volume & Mute -->
+<div class="flex items-center gap-6">
+<button class="tv-focusable w-16 h-16 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-4xl">volume_up</span>
+</button>
+<!-- Volume Slider Visual -->
+<div class="flex items-center gap-1 h-12">
+<div class="w-3 h-6 bg-primary rounded-sm"></div>
+<div class="w-3 h-8 bg-primary rounded-sm"></div>
+<div class="w-3 h-10 bg-primary rounded-sm"></div>
+<div class="w-3 h-12 bg-primary rounded-sm"></div>
+<div class="w-3 h-12 bg-white/20 rounded-sm"></div>
+<div class="w-3 h-12 bg-white/20 rounded-sm"></div>
+</div>
+</div>
+<!-- Center: Playback Controls -->
+<div class="flex items-center gap-8">
+<button class="tv-focusable p-4 rounded-full text-white/70 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-5xl">replay_10</span>
+</button>
+<!-- Main Action Button -->
+<button class="tv-focusable w-24 h-24 bg-white text-primary rounded-full flex items-center justify-center shadow-[0_0_30px_rgba(124,59,237,0.4)] hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-6xl" style="font-variation-settings: 'FILL' 1, 'wght' 700">pause</span>
+</button>
+<button class="tv-focusable p-4 rounded-full text-white/70 hover:text-white transition-colors">
+<span class="material-symbols-outlined text-5xl">forward_10</span>
+</button>
+</div>
+<!-- Right: Quality & Settings -->
+<div class="flex items-center gap-6">
+<button class="tv-focusable flex items-center gap-3 px-6 py-3 bg-white/10 hover:bg-white/20 rounded-xl transition-colors backdrop-blur-md border border-white/5">
+<span class="material-symbols-outlined text-3xl text-primary">high_quality</span>
+<span class="text-2xl font-bold">1080p60</span>
+</button>
+<button class="tv-focusable w-16 h-16 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-4xl">settings</span>
+</button>
+<button class="tv-focusable w-16 h-16 rounded-full flex items-center justify-center text-white bg-white/10 hover:bg-white/20 transition-colors">
+<span class="material-symbols-outlined text-4xl">chat_bubble</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</body></html>

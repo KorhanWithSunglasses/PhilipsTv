@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>Korhan TV - Canlı Yayınlar</title>
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Spline+Sans:wght@300;400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<!-- Material Symbols -->
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<!-- Tailwind CSS -->
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<!-- Theme Configuration -->
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    colors: {
+                        "primary": "#7c3bed",
+                        "background-light": "#f7f6f8",
+                        "background-dark": "#000000", /* Pure black for TV as requested */
+                        "surface-dark": "#171121",
+                    },
+                    fontFamily: {
+                        "display": ["Spline Sans", "sans-serif"]
+                    },
+                    borderRadius: {"DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px"},
+                    screens: {
+                        'tv': '1920px', 
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        /* Custom scrollbar hiding for clean TV UI */
+        .no-scrollbar::-webkit-scrollbar {
+            display: none;
+        }
+        .no-scrollbar {
+            -ms-overflow-style: none;
+            scrollbar-width: none;
+        }
+
+        /* TV Focus Simulation */
+        .tv-card {
+            transition: all 0.3s cubic-bezier(0.25, 0.46, 0.45, 0.94);
+        }
+        
+        .tv-card.focused {
+            transform: scale(1.1);
+            z-index: 10;
+            border: 4px solid #ffffff;
+            box-shadow: 0 0 20px 5px rgba(124, 59, 237, 0.6); /* Neon purple glow */
+        }
+
+        /* Pulsing animation for live badge */
+        @keyframes pulse-red {
+            0% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.7); }
+            70% { box-shadow: 0 0 0 10px rgba(239, 68, 68, 0); }
+            100% { box-shadow: 0 0 0 0 rgba(239, 68, 68, 0); }
+        }
+        
+        .live-pulse {
+            animation: pulse-red 2s infinite;
+        }
+
+        body {
+            background-color: #000000;
+            color: white;
+            overflow: hidden; /* Prevent scrolling on main body for TV feel */
+        }
+    </style>
+</head>
+<body class="bg-background-dark font-display antialiased h-screen w-screen overflow-hidden flex selection:bg-primary selection:text-white">
+<!-- Sidebar Navigation -->
+<nav class="w-[350px] h-full flex flex-col justify-between py-[60px] pl-[60px] pr-8 border-r border-white/10 relative z-20 bg-gradient-to-r from-black to-transparent">
+<!-- Logo Area -->
+<div class="flex flex-col mb-12">
+<h1 class="text-white text-5xl font-bold tracking-tight mb-2">Korhan TV</h1>
+<p class="text-primary text-xl font-medium tracking-widest uppercase opacity-90">Premium</p>
+</div>
+<!-- Navigation Items -->
+<div class="flex flex-col gap-6 flex-1 justify-center">
+<!-- Inactive Item -->
+<div class="group flex items-center gap-6 px-6 py-4 rounded-xl transition-all duration-300 opacity-60 hover:opacity-100 hover:bg-white/10">
+<span class="material-symbols-outlined text-4xl">home</span>
+<span class="text-3xl font-medium">Ana Sayfa</span>
+</div>
+<!-- Active Item (Canlı Yayınlar) -->
+<div class="group flex items-center gap-6 px-6 py-5 rounded-xl bg-surface-dark border-l-8 border-white shadow-[0_0_15px_rgba(0,0,0,0.5)] transform scale-105 origin-left">
+<span class="material-symbols-outlined text-4xl text-primary">videocam</span>
+<span class="text-3xl font-bold text-white">Canlı Yayınlar</span>
+</div>
+<!-- Inactive Item -->
+<div class="group flex items-center gap-6 px-6 py-4 rounded-xl transition-all duration-300 opacity-60 hover:opacity-100 hover:bg-white/10">
+<span class="material-symbols-outlined text-4xl">movie</span>
+<span class="text-3xl font-medium">Filmler</span>
+</div>
+<!-- Inactive Item -->
+<div class="group flex items-center gap-6 px-6 py-4 rounded-xl transition-all duration-300 opacity-60 hover:opacity-100 hover:bg-white/10">
+<span class="material-symbols-outlined text-4xl">tv</span>
+<span class="text-3xl font-medium">Diziler</span>
+</div>
+<!-- Inactive Item -->
+<div class="group flex items-center gap-6 px-6 py-4 rounded-xl transition-all duration-300 opacity-60 hover:opacity-100 hover:bg-white/10">
+<span class="material-symbols-outlined text-4xl">settings</span>
+<span class="text-3xl font-medium">Ayarlar</span>
+</div>
+</div>
+<!-- User Profile (Bottom) -->
+<div class="flex items-center gap-4 pt-8 border-t border-white/10 opacity-70">
+<div class="w-12 h-12 rounded-full bg-white/20 flex items-center justify-center">
+<span class="material-symbols-outlined text-2xl">person</span>
+</div>
+<span class="text-xl font-medium">Hesabım</span>
+</div>
+</nav>
+<!-- Main Content Area -->
+<main class="flex-1 flex flex-col h-full relative z-10 pl-12 pr-[60px] py-[60px]">
+<!-- Header -->
+<div class="flex items-end justify-between mb-10 w-full">
+<div class="flex flex-col">
+<h2 class="text-5xl font-bold text-white mb-2 leading-tight">Şimdi Canlı</h2>
+<p class="text-2xl text-white/50 font-normal">Popüler yayıncıları keşfet</p>
+</div>
+<div class="flex items-center gap-3 text-white/60">
+<span class="material-symbols-outlined text-3xl">sort</span>
+<span class="text-2xl">Sırala: İzleyici Sayısı</span>
+</div>
+</div>
+<!-- Grid Container -->
+<div class="grid grid-cols-4 gap-x-8 gap-y-12 w-full h-full content-start pr-4 pb-12 overflow-y-auto no-scrollbar" style="perspective: 1000px;">
+<!-- Focused Card (Swaggybark) -->
+<div class="tv-card focused relative group rounded-2xl bg-surface-dark overflow-hidden aspect-video w-full">
+<!-- Live Badge -->
+<div class="absolute top-4 right-4 z-20 bg-red-600 text-white text-sm font-bold px-3 py-1 rounded shadow-lg flex items-center gap-2 live-pulse">
+<span class="w-2 h-2 bg-white rounded-full"></span>
+                    CANLI
+                </div>
+<!-- Image -->
+<div class="w-full h-full bg-cover bg-center" data-alt="Competitive esports gaming tournament stage with blue lighting" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuBOECIULB-CN9TUxJw-MjYd4rCvYEFVyOx7g3Jfz8ecax5t3MuL3aXrtBCMlunPRrbCzAKrtvCHOQmxC9gwwBVQ4ilbkwqLq2EqXpnjZ39GZwl1pcn3IQTvQOJ7--vKRqErTAjbOeAbvmt9JVJh3Ix9azjwOLBh7_3QZdcUFVodU6sjk9Q02ZMIfiu7fHtDaQJeJI8K9VtnPKyotMHIqRAZ4yvvVAPtNi0RYGwkSOkJ4xUB0iGXh1gYiaeHeZCv4mZIEZ8aKz4UKh3r');"></div>
+<!-- Content Overlay -->
+<div class="absolute bottom-0 left-0 w-full p-6 flex flex-col gap-1">
+<h3 class="text-3xl font-bold text-white leading-tight drop-shadow-md">Swaggybark</h3>
+<p class="text-primary text-xl font-medium drop-shadow-md">Just Chatting • 25K İzleyici</p>
+</div>
+</div>
+<!-- Card 2 (Levo) -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Gamer setup with multiple monitors and rgb keyboard" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuCj0UdTZV4yXBhgbz1sb-TZDiFmKWZ3J759vFPPFpt9Q1KbXu1HEDzxh82hvZPAcGSpkiUSVOBpHBoB-BQ1a1WQcNODPnhObWrym7rz4N2IIBmiZLTzaHTYnL1pTyUjTpSmj7YfGxnWzOTanw1S4EXNMHX75AOFQsWnvfsiSC_TeALGrwAmX505fd2UfSY7PMtBPdpPOgI9eZQdrsXjuBUNwG-pDwoWyuq15eDFqVCG-7bskdhZqxD3m02Yv_vnOhhvgBhHTNWBTuGz');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Levo</h3>
+<p class="text-white/50 text-lg">League of Legends • 18K</p>
+</div>
+</div>
+<!-- Card 3 (Jahrein) -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Man talking into a microphone podcast setup dark room" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAZ0t9yC5SmgtXbqGBRNeDopIWthXcFipKAXc0qoJ9EEZaYZDPYvSnhpSsDzSM2myUJnx6ILtpQc0-FC9JZb7DLKkP_sdL1OJPACPDubOnsM6n_GPSklKmZ0nWe_RHb4qMKi_-EO2mU6ZV1XFlhi9J9_bLj3SKJWJAHqqOhWmBIOClBf08Br0k0RETS3I-0suSGwv3wwRSebnlFCmRnx-jF8T1o0ZuUR5_KBE4S4HHCpZHC8-i1hqaCjuiEakNxnVYNZ1PksMre_vXs');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Jahrein</h3>
+<p class="text-white/50 text-lg">Talk Show • 15K</p>
+</div>
+</div>
+<!-- Card 4 (Elraenn) -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Close up of gaming mouse and keyboard with pink lighting" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDn8f0sg4R1iv1qqFLytmN2Zv9QcHKQyplkTkoVPDiBF2D1uJApmBOrHtqo01ebIPU0_qzeFlpCy58utDJzXR0CTa_BGqvrsMdeGJxuEoUe3B6gHg2z9w7f6E-fzYh_buLcOkjD5FKV_lK3ImFutkt_i6wpCZs1o4d_QX6745Rfk0kNRjp_I3cNfOCHWNeh0nZbTYTira8XMg7zubPSu0nWw01o62C8HsjcRdg8bEFMmz18cHpBRSyovMccY-YSK8RgHBVcuNF3nN0D');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Elraenn</h3>
+<p class="text-white/50 text-lg">Grand Theft Auto V • 12K</p>
+</div>
+</div>
+<!-- Row 2 -->
+<!-- Card 5 -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Playstation controller on a wooden table" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuDac_wZIh5EQyWy_6RTMXsaYekAv_EeKAyaWplQhNi2nk1838J4fxX7Q_s_coTCZRpvd2gwW0xew3lXGzBM8raNQdEhxHid7K8RSAIDTzfaRentaiEQJ0gAYCylucvCTVwcMd4Ons83RnrcG09TITCkPvf1_h4Wo9x2lDf2xDm2sCr9hNspqm93FsItbZzdi6As8syF5ul7FPvlWzLfAn-Vnqf0Ihjt_v4Pb_MLUGfmeXfpYmF6Eprata8lJEl88ccTZNiWJAKDew8d');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Kendine Müzisyen</h3>
+<p class="text-white/50 text-lg">Music • 9K</p>
+</div>
+</div>
+<!-- Card 6 -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Abstract neon lights tunnel purple and blue" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuCCIUavp0KDRQEKQR4XrIt7AsrCgg7EmgO0k8yeIa1UG0OoNgk-dDOxBZaMkxGvOtFxQB8zORC05m-v1DV4wEE6qsJ0ag_EevoKDrn8ITFwrxsEoZxYYJj9nCN-OdFXX_27CRLaJtTYiReIbEd-7_Pch-dC5ZwinzkUvQvVaqguHRl3jt7vTJ1QkNMD3v5ztHCQUpUbglZ9PHjTXaGC9MrTSl0GC4Nj9P2smSctM76oclZ9RooncnfWNd_sB5PiGJ4yfTiuMEBnTt0P');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Wtcn</h3>
+<p class="text-white/50 text-lg">VALORANT • 8.5K</p>
+</div>
+</div>
+<!-- Card 7 -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Close up of a person holding a game controller" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuCGCg1v3lwghn-5glZBGIFP1iAP5U9vWvMTsucv3hjW8KYZf8N4r1LImud-q7-o3FhjQ2cyejbgf4_nbb9Jq21yJXaYRspVYVaXKkyD9DdhzHLpdhHZblxQYfct4Vn9_tlhXi0Pr7F-tUgvD3t0EB6eGQhk9kBDbW06rEO_2btSZ-54_aE6QAIXMGLcRzNuHuMsvaUQwbtFk_8C8gm4ZVlN60aGn4FsGzyjDtHdpjCUSC8bEw2OZ0ZLSr0TpWP6uDUggDtow0MfC6Ss');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">PintiPanda</h3>
+<p class="text-white/50 text-lg">Retro Gaming • 6K</p>
+</div>
+</div>
+<!-- Card 8 -->
+<div class="tv-card relative group rounded-xl bg-surface-dark overflow-hidden aspect-video opacity-80 scale-100 hover:scale-105 hover:opacity-100 transition-all duration-300 cursor-pointer">
+<div class="w-full h-full bg-cover bg-center grayscale-[30%] group-hover:grayscale-0" data-alt="Professional microphone in a recording studio with blue light" style="background-image: linear-gradient(to top, rgba(0,0,0,0.9), transparent), url('https://lh3.googleusercontent.com/aida-public/AB6AXuAoyP06j65yK3hrG8wMjRecEUH1zl7bw5yI18E0_j1-hI3Jev9YIVwY-CQkL2Uoj1rU3XKs6l7IlxXqyqEfnX3AKJaHObmzWdRWIj2Sg5qfW7sX9sRm0am77pOD7mwTRPda5PJzhgCUWMvX6yM4t3BDH9OVPGX0XWxvKlZl_Y0LrxYXHKMWH5VZE4fcN-TomHkSkG4itRNtJ9E9WZlyxDWulIs25NCmQ2L9aO36TSabcRs5pAYTG9ggDWNK58zfGF54s5kZTXOI4n1W');"></div>
+<div class="absolute bottom-0 left-0 w-full p-5 flex flex-col">
+<h3 class="text-2xl font-bold text-white/90 leading-tight">Mithrain</h3>
+<p class="text-white/50 text-lg">PUBG • 5.2K</p>
+</div>
+</div>
+</div>
+</main>
+<!-- TV Remote Hint / Footer -->
+<div class="fixed bottom-[60px] right-[60px] z-50 flex items-center gap-6 opacity-40">
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 border border-white rounded-full flex items-center justify-center bg-white/10">
+<span class="material-symbols-outlined text-xl">arrow_back</span>
+</div>
+<span class="text-lg font-medium">Geri</span>
+</div>
+<div class="flex items-center gap-2">
+<div class="w-10 h-10 border border-white rounded-full flex items-center justify-center bg-white/10">
+<span class="material-symbols-outlined text-xl">check</span>
+</div>
+<span class="text-lg font-medium">Seç</span>
+</div>
+</div>
+</body></html>
