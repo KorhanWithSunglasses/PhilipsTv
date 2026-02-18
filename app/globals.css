@@ -1,14 +1,11 @@
-@import "tailwindcss";
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-@theme {
+:root {
   --color-primary: #FF6600;
-  --color-background-light: #f7f6f8;
-  --color-background-dark: #171121;
   --color-tv-black: #050505;
-  
   --font-display: "Spline Sans", sans-serif;
-  
-  --spacing-overscan: 60px;
 }
 
 body {
