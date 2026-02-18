@@ -217,7 +217,11 @@ export default function TVPlayer({
       player.play()?.catch(() => setPaused(true));
     });
 
+    return () => {
+      if (player && !player.isDisposed()) {
+        player.dispose();
       }
+      playerRef.current = null;
     };
   }, [src, useNativePlayer]);
 
@@ -726,6 +730,7 @@ export default function TVPlayer({
             </div>
           </div>
         </>
+      )}
     </div>
   );
 }
