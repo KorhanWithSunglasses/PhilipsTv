@@ -55,6 +55,24 @@ export default function TVPlayer({
 
   const [useNativePlayer, setUseNativePlayer] = useState(false);
 
+  // Auto-detect TV/Vewd browser
+  useEffect(() => {
+      if (typeof navigator !== 'undefined') {
+          const ua = navigator.userAgent.toLowerCase();
+          const isTV = ua.includes('vewd') || ua.includes('smarttv') || ua.includes('web0s') || ua.includes('netcast') || ua.includes('tizen');
+          if (isTV) {
+              setUseNativePlayer(true);
+          }
+      }
+  }, []);
+
+  // Handle Remote Control Keys (Enter/OK)
+  const handleRemoteKey = (e: React.KeyboardEvent, action: () => void) => {
+      if (e.key === 'Enter' || e.keyCode === 13) {
+          action();
+      }
+  };
+
   // Initialize Player
   useEffect(() => {
     if (!videoRef.current) return;
@@ -403,7 +421,9 @@ export default function TVPlayer({
           <div className="absolute top-4 left-4 z-50">
              <button 
                 onClick={() => setUseNativePlayer(false)}
-                className="bg-black/50 text-white px-4 py-2 rounded border border-white/20 hover:bg-black/70"
+                onKeyDown={(e) => handleRemoteKey(e, () => setUseNativePlayer(false))}
+                tabIndex={0}
+                className="tv-focusable bg-black/50 text-white px-4 py-2 rounded border border-white/20 hover:bg-black/70"
             >
                 Gelişmiş Moda Dön
             </button>
@@ -476,7 +496,9 @@ export default function TVPlayer({
             <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100] transition-opacity duration-500 hover:opacity-100 opacity-80">
                 <button 
                     onClick={() => setUseNativePlayer(true)}
-                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl text-lg font-bold shadow-2xl border border-white/20 flex items-center gap-3 cursor-pointer select-none active:scale-95 transition-transform"
+                    onKeyDown={(e) => handleRemoteKey(e, () => setUseNativePlayer(true))}
+                    tabIndex={0}
+                    className="tv-focusable bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl text-lg font-bold shadow-2xl border border-white/20 flex items-center gap-3 cursor-pointer select-none active:scale-95 transition-transform"
                     style={{ pointerEvents: 'auto' }}
                 >
                     <span className="material-symbols-outlined text-2xl">videocam_off</span>
