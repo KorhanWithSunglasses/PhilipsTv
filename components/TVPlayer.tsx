@@ -89,19 +89,43 @@ export default function TVPlayer({
         const videoElement = document.createElement("video");
         videoElement.src = src;
         videoElement.controls = true;
-        videoElement.autoplay = true;
+        videoElement.autoplay = false; // Disable Autoplay to rely on user interaction
         videoElement.playsInline = true;
         videoElement.style.width = '100%';
         videoElement.style.height = '100%';
         videoElement.style.backgroundColor = 'black';
         videoElement.crossOrigin = "anonymous";
         
+        // NATIVE DEBUG & ERROR LISTENERS
+        const updateDebug = () => {
+             const err = videoElement.error;
+             if (err) {
+                 let msg = `MediaError: ${err.code}`;
+                 if (err.code === 4) msg += ' (SRC_NOT_SUPPORTED/CORS)';
+                 if (err.code === 3) msg += ' (DECODE)';
+                 if (err.code === 2) msg += ' (NETWORK)';
+                 if (err.code === 1) msg += ' (ABORTED)';
+                 setErrorMsg(msg + `\nMessage: ${err.message}`);
+             }
+        };
+
+        videoElement.addEventListener('error', updateDebug);
+        videoElement.addEventListener('stalled', () => console.warn('Native: Stalled'));
+        videoElement.addEventListener('waiting', () => console.log('Native: Waiting'));
+        videoElement.addEventListener('playing', () => setPaused(false));
+        videoElement.addEventListener('pause', () => setPaused(true));
+
         videoRef.current.innerHTML = '';
         videoRef.current.appendChild(videoElement);
         
-        // Add a "Back" button to this view manually or just render it via React below?
-        // Better to render via React. We just clear the video container here.
-        return;
+        // Return cleanup
+        const currentRef = videoRef.current;
+        return () => {
+             videoElement.removeEventListener('error', updateDebug);
+             if (currentRef) {
+                currentRef.innerHTML = '';
+             }
+        };
     }
 
     if (playerRef.current) {
@@ -418,16 +442,52 @@ export default function TVPlayer({
       
       {/* NATIVE PLAYER OVERLAY CONTROLS */}
       {useNativePlayer && (
-          <div className="absolute top-4 left-4 z-50">
-             <button 
-                onClick={() => setUseNativePlayer(false)}
-                onKeyDown={(e) => handleRemoteKey(e, () => setUseNativePlayer(false))}
-                tabIndex={0}
-                className="tv-focusable bg-black/50 text-white px-4 py-2 rounded border border-white/20 hover:bg-black/70"
-            >
-                Gelişmiş Moda Dön
-            </button>
-          </div>
+          <>
+            {/* Native Debug Info */}
+            <div className="absolute top-0 right-0 bg-black/80 text-green-400 font-mono text-xs p-2 z-[60] pointer-events-none opacity-50">
+                Native Mode | Src: {src.substring(0, 30)}...
+            </div>
+
+            {/* BIG PLAY BUTTON (Click-to-Play for Vewd/TVs) */}
+            {paused && (
+                <div className="absolute inset-0 flex items-center justify-center z-[55] bg-black/40">
+                    <button 
+                        onClick={() => {
+                            const video = videoRef.current?.querySelector('video');
+                            if (video) {
+                                video.play().catch(e => setErrorMsg(`Play Error: ${e.message}`));
+                                setPaused(false);
+                            }
+                        }}
+                        onKeyDown={(e) => handleRemoteKey(e, () => {
+                            const video = videoRef.current?.querySelector('video');
+                            if (video) {
+                                video.play().catch(e => setErrorMsg(`Play Error: ${e.message}`));
+                                setPaused(false);
+                            }
+                        })}
+                        tabIndex={0}
+                        className="tv-focusable bg-[#FF6600] hover:bg-[#ff8533] text-white w-32 h-32 rounded-full flex items-center justify-center shadow-[0_0_50px_rgba(255,102,0,0.6)] animate-pulse"
+                    >
+                        <span className="material-symbols-outlined text-[80px]">play_arrow</span>
+                    </button>
+                    <p className="absolute bottom-20 text-white font-bold text-xl drop-shadow-md">
+                        Video Başlatmak İçin Basın
+                    </p>
+                </div>
+            )}
+
+            <div className="absolute top-4 left-4 z-50">
+                <button 
+                    onClick={() => setUseNativePlayer(false)}
+                    onKeyDown={(e) => handleRemoteKey(e, () => setUseNativePlayer(false))}
+                    tabIndex={0}
+                    className="tv-focusable bg-black/50 text-white px-4 py-2 rounded border border-white/20 hover:bg-black/70"
+                >
+                    Gelişmiş Moda Dön
+                </button>
+            </div>
+          </>
       )}
       
       {/* ERROR UI */}
