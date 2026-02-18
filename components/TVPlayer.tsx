@@ -470,22 +470,17 @@ export default function TVPlayer({
         </div>
       )}
 
-      {/* DEBUG OVERLAY (Visible slightly) */}
-      <div className="absolute top-0 right-0 p-2 bg-black/50 text-[10px] text-white/30 font-mono pointer-events-none z-50">
-          Ready: {playerRef.current?.readyState()} | Net: {playerRef.current?.networkState()}
-      </div>
-
-
-      {/* Overlays - Only show if not minimal */}
+      {/* RE-DESIGNED "BASIT MOD" BUTTON - Z-Index 100 / Center Top / Pointer Events Force */}
       {!minimal && !showErrorDetails && (
         <>
-            <div className="absolute top-4 right-4 z-50">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 z-[100] transition-opacity duration-500 hover:opacity-100 opacity-80">
                 <button 
                     onClick={() => setUseNativePlayer(true)}
-                    className="bg-white/10 hover:bg-white/20 text-white/50 hover:text-white px-4 py-2 rounded-lg text-sm font-bold backdrop-blur-md border border-white/5 transition-colors flex items-center gap-2"
+                    className="bg-red-600 hover:bg-red-700 text-white px-6 py-3 rounded-xl text-lg font-bold shadow-2xl border border-white/20 flex items-center gap-3 cursor-pointer select-none active:scale-95 transition-transform"
+                    style={{ pointerEvents: 'auto' }}
                 >
-                    <span className="material-symbols-outlined text-lg">videocam_off</span>
-                    Video Açılmıyor mu? Basit Mod
+                    <span className="material-symbols-outlined text-2xl">videocam_off</span>
+                    BASIT MOD (Video Açılmazsa Tıkla)
                 </button>
             </div>
 
