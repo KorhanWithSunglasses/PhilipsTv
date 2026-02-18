@@ -5,6 +5,11 @@ import Hls, { ErrorData, Events } from 'hls.js';
 
 interface TVPlayerProps {
   src: string;
+  isLive?: boolean;
+  channelName?: string;
+  title?: string;
+  category?: string;
+  startTime?: string | number;
 }
 
 export default function TVPlayer({ src }: TVPlayerProps) {
