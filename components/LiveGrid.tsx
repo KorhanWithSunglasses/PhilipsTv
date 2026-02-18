@@ -93,9 +93,9 @@ export default function LiveGrid({ initialChannels }: LiveGridProps) {
         </div>
 
         {/* Grid Container */}
-        <div className="grid grid-cols-4 gap-14 w-full content-start pr-4 pb-40 overflow-y-auto no-scrollbar">
+        <div className="grid grid-cols-4 gap-8 w-full content-start pr-4 pb-40 overflow-y-auto no-scrollbar">
             {sortedChannels.map((channel) => (
-                <div key={channel.username} className="aspect-video w-full relative group/card z-0 hover:z-50">
+                <div key={channel.username} className="w-full h-[250px] relative group/card z-0 hover:z-50">
                     <StreamCard channel={channel} />
                 </div>
             ))}

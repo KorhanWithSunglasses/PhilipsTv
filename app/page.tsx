@@ -49,7 +49,7 @@ export default async function Home() {
             </div>
             <div className="flex gap-8 pb-8 pl-2 pt-2 overflow-x-auto no-scrollbar">
                 {displayedRow.map((channel) => (
-                    <div key={channel.username} className="w-[440px] shrink-0 aspect-video relative">
+                    <div key={channel.username} className="w-[440px] h-[248px] shrink-0 relative">
                          <StreamCard channel={channel} isLarge={true} />
                     </div>
                 ))}
