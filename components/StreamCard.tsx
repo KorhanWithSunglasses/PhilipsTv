@@ -37,7 +37,7 @@ export default function StreamCard({ channel, isLarge = false }: StreamCardProps
         )}
         
         {!isLive && (
-             <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/60 backdrop-blur-md px-3 py-1.5 rounded">
+             <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/80 px-3 py-1.5 rounded">
                 <span className="text-white text-sm font-bold tracking-wider">OFFLINE</span>
             </div>
         )}
