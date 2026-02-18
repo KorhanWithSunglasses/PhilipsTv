@@ -97,11 +97,23 @@ export default function TVPlayer({
         console.error('VideoJS Error:', err);
         // Translate common errors
         let msg = `Hata Kodu: ${err?.code}`;
-        if (err?.code === 4) msg = 'Yayın kaynağı desteklenmiyor veya şu an erişilemiyor (Media Error 4).';
-        if (err?.code === 3) msg = 'Yayın çözme hatası (Decode Error).';
-        if (err?.code === 2) msg = 'Ağ bağlantısı hatası (Network Error).';
+        let details = err?.message || 'Bilinmeyen Hata';
         
-        setErrorMsg(`${msg} (${err?.message})`);
+        if (err?.code === 4) {
+             msg = 'MEDIA_ERR_SRC_NOT_SUPPORTED (4)';
+             details = 'Video formatı desteklenmiyor veya ağ hatası (CORS/404).';
+        }
+        if (err?.code === 3) msg = 'MEDIA_ERR_DECODE (3) - Çözme Hatası';
+        if (err?.code === 2) msg = 'MEDIA_ERR_NETWORK (2) - Ağ Hatası';
+        if (err?.code === 1) msg = 'MEDIA_ERR_ABORTED (1) - İptal Edildi';
+        
+        setErrorMsg(`${msg} \n Detay: ${details}`);
+      });
+      
+      // Also catch stalled events which might look like a freeze
+      player.on('stalled', () => {
+          console.warn('Video Stalled');
+          // Optional: Show a "Buffering/Stalled" generic warning if it persists
       });
       
       player.on('play', () => setPaused(false));
@@ -359,41 +371,68 @@ export default function TVPlayer({
       
       {/* ERROR UI */}
       {errorMsg && (
-        <div className="absolute inset-0 z-50 bg-black/80 flex items-center justify-center p-8 backdrop-blur-sm">
-            <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-red-500/30 max-w-xl w-full text-center shadow-2xl">
+        <div className="absolute inset-0 z-50 bg-black/90 flex items-center justify-center p-8 backdrop-blur-sm">
+            <div className="bg-[#1a1a1a] p-8 rounded-2xl border border-red-500/50 max-w-2xl w-full text-center shadow-2xl">
                 <span className="material-symbols-outlined text-6xl text-red-500 mb-4">error_outline</span>
-                <h2 className="text-2xl font-bold text-white mb-2">Yayın Oynatılamadı</h2>
-                <p className="text-gray-400 mb-6">{errorMsg.split('(')[0]}</p>
+                <h2 className="text-3xl font-bold text-white mb-2">Oynatma Hatası</h2>
+                <div className="bg-black/50 p-4 rounded-lg mb-6 text-left font-mono text-sm overflow-auto max-h-40 border border-white/10">
+                    <p className="text-red-400 font-bold mb-1">Hata Mesajı:</p>
+                    <p className="text-white break-all">{errorMsg}</p>
+                    <div className="mt-2 pt-2 border-t border-white/10">
+                        <p className="text-gray-500">Video Kaynağı:</p>
+                        <p className="text-gray-400 text-xs break-all">{src}</p>
+                    </div>
+                </div>
                 
-                <div className="flex flex-col gap-3">
+                <div className="flex gap-4 justify-center">
                     <button 
                         onClick={() => window.location.reload()}
-                        className="bg-white text-black font-bold py-3 px-6 rounded-xl hover:bg-gray-200 transition-colors flex items-center justify-center gap-2"
+                        className="bg-white text-black font-bold py-3 px-8 rounded-xl hover:bg-gray-200 transition-colors flex items-center gap-2"
                     >
                         <span className="material-symbols-outlined">refresh</span>
                         Sayfayı Yenile
                     </button>
-                    
                     <button 
-                        onClick={() => setShowErrorDetails(!showErrorDetails)}
-                        className="text-white/50 text-sm hover:text-white transition-colors underline decoration-dotted"
+                        onClick={() => {
+                            if (playerRef.current) {
+                                playerRef.current.src({ src, type: 'application/x-mpegURL' });
+                                setErrorMsg(null);
+                            }
+                        }}
+                        className="bg-white/10 text-white font-bold py-3 px-8 rounded-xl hover:bg-white/20 transition-colors flex items-center gap-2"
                     >
-                        {showErrorDetails ? 'Teknik Detayları Gizle' : 'Bu hata neden oldu? (Teknik Detaylar)'}
+                        <span className="material-symbols-outlined">replay</span>
+                        Tekrar Dene
                     </button>
-
-                    {showErrorDetails && (
-                        <div className="mt-4 p-4 bg-black/50 rounded-lg text-left overflow-hidden">
-                            <p className="font-mono text-xs text-red-300 break-all mb-2">{errorMsg}</p>
-                            <div className="border-t border-white/10 pt-2 mt-2">
-                                <p className="text-xs text-gray-500 font-mono">Kaynak:</p>
-                                <p className="text-xs text-gray-400 font-mono break-all">{src}</p>
-                            </div>
-                        </div>
-                    )}
                 </div>
+                
+                <button 
+                    onClick={() => setShowErrorDetails(!showErrorDetails)}
+                    className="mt-6 text-white/50 text-sm hover:text-white transition-colors underline decoration-dotted"
+                >
+                    {showErrorDetails ? 'Teknik Detayları Gizle' : 'Bu hata neden oldu? (Teknik Detaylar)'}
+                </button>
+
+                {showErrorDetails && (
+                    <div className="mt-4 p-4 bg-black/50 rounded-lg text-left overflow-hidden border border-white/10">
+                        <p className="font-mono text-xs text-red-300 break-all mb-2 whitespace-pre-wrap">{errorMsg}</p>
+                        <div className="border-t border-white/10 pt-2 mt-2">
+                            <p className="text-xs text-gray-500 font-mono">Kaynak:</p>
+                            <p className="text-xs text-gray-400 font-mono break-all">{src}</p>
+                            <p className="text-xs text-gray-500 font-mono mt-1">
+                                User Agent: {typeof navigator !== 'undefined' ? navigator.userAgent : 'Server'}
+                            </p>
+                        </div>
+                    </div>
+                )}
             </div>
         </div>
       )}
+
+      {/* DEBUG OVERLAY (Visible slightly) */}
+      <div className="absolute top-0 right-0 p-2 bg-black/50 text-[10px] text-white/30 font-mono pointer-events-none z-50">
+          Ready: {playerRef.current?.readyState()} | Net: {playerRef.current?.networkState()}
+      </div>
 
 
       {/* Overlays - Only show if not minimal */}
