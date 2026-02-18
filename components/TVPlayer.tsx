@@ -10,6 +10,7 @@ interface TVPlayerProps {
   title?: string;
   category?: string;
   startTime?: string | number;
+  minimal?: boolean;
 }
 
 export default function TVPlayer({ src }: TVPlayerProps) {
