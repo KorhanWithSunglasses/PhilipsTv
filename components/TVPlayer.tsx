@@ -53,16 +53,43 @@ export default function TVPlayer({
   const [errorMsg, setErrorMsg] = useState<string | null>(null);
   const [showErrorDetails, setShowErrorDetails] = useState(false);
 
+  const [useNativePlayer, setUseNativePlayer] = useState(false);
+
   // Initialize Player
   useEffect(() => {
     if (!videoRef.current) return;
-    if (!src) return; // Kaynak yoksa başlatma
+    if (!src) return; 
+
+    // NATIVE MODE IMPLEMENTATION
+    if (useNativePlayer) {
+        if (playerRef.current) {
+            playerRef.current.dispose();
+            playerRef.current = null;
+        }
+        
+        // Manual Simple Video Tag
+        const videoElement = document.createElement("video");
+        videoElement.src = src;
+        videoElement.controls = true;
+        videoElement.autoplay = true;
+        videoElement.playsInline = true;
+        videoElement.style.width = '100%';
+        videoElement.style.height = '100%';
+        videoElement.style.backgroundColor = 'black';
+        videoElement.crossOrigin = "anonymous";
+        
+        videoRef.current.innerHTML = '';
+        videoRef.current.appendChild(videoElement);
+        
+        // Add a "Back" button to this view manually or just render it via React below?
+        // Better to render via React. We just clear the video container here.
+        return;
+    }
 
     if (playerRef.current) {
         const player = playerRef.current;
         if (player.currentSrc() !== src) {
             player.src({ src, type: 'application/x-mpegURL' });
-            // Reset error asynchronously to avoid lint error
             setTimeout(() => setErrorMsg(null), 0);
         }
         return;
@@ -72,6 +99,7 @@ export default function TVPlayer({
     videoElement.classList.add('vjs-big-play-centered');
     videoElement.style.width = '100%';
     videoElement.style.height = '100%';
+    videoRef.current.innerHTML = ''; // Clear previous
     videoRef.current.appendChild(videoElement);
 
     const player = playerRef.current = videojs(videoElement, {
@@ -81,7 +109,9 @@ export default function TVPlayer({
       fluid: false,
       html5: {
         vhs: {
-            overrideNative: true
+             // TV COMPATIBILITY: Try to use native if possible (better for old smart TVs)
+             // or fallback to MSE. 
+            overrideNative: false
         },
         nativeAudioTracks: false,
         nativeVideoTracks: false
@@ -113,7 +143,6 @@ export default function TVPlayer({
       // Also catch stalled events which might look like a freeze
       player.on('stalled', () => {
           console.warn('Video Stalled');
-          // Optional: Show a "Buffering/Stalled" generic warning if it persists
       });
       
       player.on('play', () => setPaused(false));
@@ -188,13 +217,9 @@ export default function TVPlayer({
       player.play()?.catch(() => setPaused(true));
     });
 
-    return () => {
-      if (player && !player.isDisposed()) {
-        player.dispose();
-        playerRef.current = null;
       }
     };
-  }, [src]);
+  }, [src, useNativePlayer]);
 
   // Hide controls interactions
   useEffect(() => {
@@ -369,6 +394,18 @@ export default function TVPlayer({
       {/* Video Container */}
       <div ref={videoRef} className="absolute inset-0 w-full h-full z-0 pointer-events-none" />
       
+      {/* NATIVE PLAYER OVERLAY CONTROLS */}
+      {useNativePlayer && (
+          <div className="absolute top-4 left-4 z-50">
+             <button 
+                onClick={() => setUseNativePlayer(false)}
+                className="bg-black/50 text-white px-4 py-2 rounded border border-white/20 hover:bg-black/70"
+            >
+                Gelişmiş Moda Dön
+            </button>
+          </div>
+      )}
+      
       {/* ERROR UI */}
       {errorMsg && (
         <div className="absolute inset-0 z-50 bg-black/90 flex items-center justify-center p-8 backdrop-blur-sm">
@@ -436,10 +473,21 @@ export default function TVPlayer({
 
 
       {/* Overlays - Only show if not minimal */}
-      {!minimal && (
+      {!minimal && !showErrorDetails && (
         <>
+            <div className="absolute top-4 right-4 z-50">
+                <button 
+                    onClick={() => setUseNativePlayer(true)}
+                    className="bg-white/10 hover:bg-white/20 text-white/50 hover:text-white px-4 py-2 rounded-lg text-sm font-bold backdrop-blur-md border border-white/5 transition-colors flex items-center gap-2"
+                >
+                    <span className="material-symbols-outlined text-lg">videocam_off</span>
+                    Video Açılmıyor mu? Basit Mod
+                </button>
+            </div>
+
           {/* Top Information Overlay */}
           <div className={`absolute top-0 left-0 w-full h-48 overlay-gradient-top z-10 flex items-start justify-between p-[var(--spacing-overscan)] pointer-events-none transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
+            {/* ... content ... */}
             {/* Streamer Info */}
             <div className="flex flex-col gap-2">
                 <div className="flex items-center gap-4">
@@ -454,8 +502,6 @@ export default function TVPlayer({
                             </div>
                         </div>
                     )}
-                    
-                    {/* Old Time Display Removed */} 
                 </div>
                 {/* DYNAMIC CHANNEL NAME */}
                 <h1 className="text-5xl font-bold text-white tracking-tight mt-2 drop-shadow-md">{channelName}</h1>
@@ -475,6 +521,7 @@ export default function TVPlayer({
             </div>
           </div>
 
+          {/* ... rest of overlays ... */}
           {/* Center Play Icon Animation (Only when Paused) */}
           <div className={`absolute inset-0 z-10 flex items-center justify-center pointer-events-none transition-opacity duration-300 ${paused ? 'opacity-100' : 'opacity-0 group-hover/player:opacity-100'}`}>
                 {paused && (
@@ -486,16 +533,11 @@ export default function TVPlayer({
 
           {/* Bottom Controls Overlay */}
           <div className={`absolute bottom-0 left-0 w-full h-auto min-h-[160px] overlay-gradient-bottom z-20 flex flex-col justify-end p-[var(--spacing-overscan)] transition-opacity duration-300 ${showControls ? 'opacity-100' : 'opacity-0'}`}>
-            
+            {/* ... controls ... */}
                 {/* Scrubber Row */}
             <div className="flex items-center gap-4 w-full mb-6 relative">
-                 {/* Left Label: Max History (e.g. -04:00) OR Real Stream Time */}
+                 {/* Left Label */}
                  <span className="text-white/70 font-mono text-sm font-bold min-w-[50px] text-right">
-                    {/* 
-                        If Live and we have StartTime: Show (TotalElapsed - Latency) -> 02:45:12
-                        Else if Live: Show negative buffer -> -04:00 
-                        Else (VOD): Show currentTime -> 00:15:30 
-                    */}
                     {isLive && startTime 
                         ? formatTime(Math.max(0, elapsedStreamTime - liveLatency))
                         : (isFinite(duration) && duration > 0 
@@ -563,12 +605,12 @@ export default function TVPlayer({
 
             {/* 2. Main Control Row */}
             <div className="flex items-center justify-between w-full pointer-events-auto px-2">
-                
                 {/* Left: Volume Controls */}
                 <div className="flex items-center gap-4 group/volume w-1/4">
                     <button className="tv-focusable w-12 h-12 rounded-full flex items-center justify-center text-white/80 hover:text-white hover:bg-white/10 transition-colors" onClick={toggleMute}>
                         <span className="material-symbols-outlined text-3xl">{muted || volume === 0 ? 'volume_off' : 'volume_up'}</span>
                     </button>
+                    {/* ... volume slider ... */}
                     <div className="w-0 overflow-hidden group-hover/volume:w-32 transition-all duration-300 flex items-center">
                         <input
                             type="range"
@@ -684,7 +726,6 @@ export default function TVPlayer({
             </div>
           </div>
         </>
-      )}
     </div>
   );
 }
